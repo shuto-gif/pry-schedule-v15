@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRY 週間スケジュール v15</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0c;
+  --surface: #141418;
+  --surface2: #1c1c22;
+  --border: #2a2a33;
+  --text: #e8e6e3;
+  --text-dim: #8a8892;
+  --pry: #a8a080;
+  --board: #9080d8;
+  --board-dim: rgba(144, 128, 216, 0.2);
+  --design: #a8a080;
+  --design-dim: rgba(168, 160, 128, 0.22);
+  --pry-c: #4a80d0;
+  --pry-dim: rgba(74, 128, 208, 0.18);
+  --mtg: #50c8e0;
+  --mtg-dim: rgba(80, 200, 224, 0.18);
+  --yt: #e0a030;
+  --yt-dim: rgba(224, 160, 48, 0.18);
+  --uni: #d0b830;
+  --uni-dim: rgba(208, 184, 48, 0.18);
+  --live: #dc4040;
+  --live-dim: rgba(220, 64, 64, 0.2);
+  --notify: #40a860;
+  --notify-dim: rgba(64, 168, 96, 0.18);
+  --field: #1a6b40;
+  --field-dim: rgba(26, 107, 64, 0.18);
+  --off: #2a2a33;
+  --off-dim: rgba(42, 42, 51, 0.5);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans JP", sans-serif;
+}
+a { color: inherit; }
+.header {
+  padding: 16px 20px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.header h1 {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--pry);
+}
+.header .ver {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.header .summary {
+  width: 100%;
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+.header .actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.header .actions a {
+  font-size: 10px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text-dim);
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+.header .actions a:hover {
+  border-color: var(--pry);
+  color: var(--pry);
+}
+.filter-bar {
+  padding: 6px 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+.filter-label {
+  font-family: "DM Mono", monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  min-width: 56px;
+}
+.ftag {
+  font-family: "DM Mono", monospace;
+  font-size: 7px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.45;
+  border: 1px solid transparent;
+}
+.ftag:hover { opacity: 0.85; }
+.ftag.active { opacity: 1; box-shadow: 0 0 0 1px currentColor; }
+
+.ftag-all { background: rgba(144, 128, 216, 0.15); color: #b0a0e8; border-color: rgba(144, 128, 216, 0.3); }
+.ftag-shuto { background: rgba(168, 160, 128, 0.22); color: #fff; border-color: rgba(168, 160, 128, 0.4); }
+.ftag-zastin { background: rgba(208, 184, 48, 0.15); color: #d0b830; border-color: rgba(208, 184, 48, 0.3); }
+.ftag-issei { background: rgba(91, 157, 239, 0.15); color: #6aa0f0; border-color: rgba(91, 157, 239, 0.25); }
+
+.ftag-cabinet { background: rgba(168, 160, 128, 0.22); color: #fff; border-color: rgba(168, 160, 128, 0.4); }
+.ftag-atelier { background: rgba(144, 128, 216, 0.15); color: #b0a0e8; border-color: rgba(144, 128, 216, 0.3); }
+.ftag-studio { background: rgba(208, 184, 48, 0.15); color: #d0b830; border-color: rgba(208, 184, 48, 0.3); }
+.ftag-remote { background: rgba(64, 168, 96, 0.12); color: #60c880; border-color: rgba(64, 168, 96, 0.2); }
+.ftag-fieldwork { background: rgba(255, 255, 255, 0.73); color: #1a1a1a; border-color: rgba(180, 175, 160, 0.5); }
+
+.ftag-design { background: var(--design-dim); color: #fff; border-color: rgba(168, 160, 128, 0.4); }
+.ftag-board { background: var(--board-dim); color: #c0b4f0; border-color: rgba(144, 128, 216, 0.35); }
+.ftag-pry { background: var(--pry-dim); color: #80b0e8; border-color: rgba(74, 128, 208, 0.3); }
+.ftag-mtg { background: var(--mtg-dim); color: #60d0e8; border-color: rgba(80, 200, 224, 0.3); }
+.ftag-uni { background: var(--uni-dim); color: #e0d070; border-color: rgba(208, 184, 48, 0.3); }
+.ftag-yt { background: var(--yt-dim); color: #e8b850; border-color: rgba(224, 160, 48, 0.3); }
+.ftag-live { background: var(--live-dim); color: #e86060; border-color: rgba(220, 64, 64, 0.3); }
+.ftag-notify { background: var(--notify-dim); color: #70d090; border-color: rgba(64, 168, 96, 0.3); }
+.ftag-field { background: var(--field-dim); color: #40a068; border-color: rgba(26, 107, 64, 0.3); }
+.ftag-fw { background: rgba(255, 255, 255, 0.73); color: #1a1a1a; border-color: rgba(180, 175, 160, 0.5); }
+.ftag-off { background: var(--off-dim); color: #666; border-color: rgba(80, 80, 80, 0.3); }
+
+.container {
+  padding: 10px 8px 16px;
+  overflow-x: auto;
+}
+.timetable {
+  display: grid;
+  grid-template-columns: 38px repeat(7, 1fr);
+}
+.time-col {
+  position: relative;
+}
+.time-label {
+  position: absolute;
+  right: 4px;
+  transform: translateY(-4px);
+  font-family: "DM Mono", monospace;
+  font-size: 8px;
+  color: var(--text-dim);
+}
+.day-col {
+  border-left: 1px solid var(--border);
+  position: relative;
+}
+.day-hdr {
+  padding: 5px 4px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.day-name {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.day-theme {
+  font-size: 8px;
+  font-weight: 300;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+.day-body {
+  position: relative;
+}
+.hline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
+  opacity: 0.35;
+}
+.ev {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-size: 8px;
+  line-height: 1.25;
+  overflow: hidden;
+  border-left: 2px solid;
+  z-index: 1;
+}
+.ev-t {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ev-s {
+  font-weight: 300;
+  color: var(--text-dim);
+  font-size: 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ev-p {
+  font-family: "DM Mono", monospace;
+  font-size: 6px;
+  letter-spacing: 0.03em;
+  opacity: 0.7;
+}
+.ev-board { background: var(--board-dim); border-color: var(--board); color: #c0b4f0; }
+.ev-design { background: var(--design-dim); border-color: var(--design); color: #fff; }
+.ev-pry { background: var(--pry-dim); border-color: var(--pry-c); color: #80b0e8; }
+.ev-mtg { background: var(--mtg-dim); border-color: var(--mtg); color: #60d0e8; }
+.ev-yt { background: var(--yt-dim); border-color: var(--yt); color: #e8b850; }
+.ev-uni { background: var(--uni-dim); border-color: var(--uni); color: #e0d070; }
+.ev-live { background: var(--live-dim); border-color: var(--live); color: #e86060; }
+.ev-notify { background: var(--notify-dim); border-color: var(--notify); color: #70d090; }
+.ev-field { background: var(--field-dim); border-color: var(--field); color: #40a068; }
+.ev-fw { background: rgba(255, 255, 255, 0.73); border-color: rgba(180, 175, 160, 0.5); color: #1a1a1a; }
+.ev-off { background: var(--off-dim); border-color: var(--off); color: #555; }
+
+.meta {
+  padding: 18px 20px 28px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 12px;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.panel h2 {
+  font-size: 12px;
+  color: var(--pry);
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+}
+.panel ul {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.panel li {
+  font-size: 11px;
+  line-height: 1.65;
+  color: var(--text-dim);
+}
+.panel li strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.footer {
+  text-align: center;
+  padding: 12px;
+  font-size: 9px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 960px) {
+  .meta {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>PRY 週間スケジュール</h1>
+  <span class="ver">v15 — 2026/03/17</span>
+  <div class="actions">
+    <a href="https://shuto-gif.github.io/pry-schedule/" target="_blank" rel="noreferrer">現行 v14</a>
+    <a href="https://github.com/shuto-gif/pry-schedule-v15" target="_blank" rel="noreferrer">GitHub</a>
+  </div>
+  <div class="summary">
+    v14を上書きせずに切り出した、v15の独立チャート。<br>
+    `all` の乱用を削り、`自動配信` と `変動週` を分離し、Shutoの水曜一人デーと Issei の公開門番役を構造で守る。
+  </div>
+</div>
+
+<div class="filter-bar" id="filter-member">
+  <span class="filter-label">MEMBER:</span>
+  <span class="ftag ftag-shuto active" data-member="shuto" onclick="toggleMember(this)">SHUTO</span>
+  <span class="ftag ftag-all active" data-member="all" onclick="toggleMember(this)">ALL</span>
+  <span class="ftag ftag-issei active" data-member="issei" onclick="toggleMember(this)">ISSEI</span>
+  <span class="ftag ftag-zastin active" data-member="zastin" onclick="toggleMember(this)">ZASTIN</span>
+</div>
+
+<div class="filter-bar" id="filter-floor">
+  <span class="filter-label">FLOOR:</span>
+  <span class="ftag ftag-cabinet active" data-floor="cabinet" onclick="toggleFloor(this)">5F CABINET</span>
+  <span class="ftag ftag-atelier active" data-floor="atelier" onclick="toggleFloor(this)">5F ATELIER</span>
+  <span class="ftag ftag-studio active" data-floor="studio" onclick="toggleFloor(this)">4F STUDIO</span>
+  <span class="ftag ftag-remote active" data-floor="remote" onclick="toggleFloor(this)">REMOTE</span>
+  <span class="ftag ftag-fieldwork active" data-floor="fieldwork" onclick="toggleFloor(this)">FIELDWORK</span>
+</div>
+
+<div class="filter-bar" id="filter-task">
+  <span class="filter-label">TASK:</span>
+  <span class="ftag ftag-design active" data-task="design" onclick="toggleTask(this)">個人ワーク</span>
+  <span class="ftag ftag-board active" data-task="board" onclick="toggleTask(this)">ボード</span>
+  <span class="ftag ftag-pry active" data-task="pry" onclick="toggleTask(this)">PRY運用</span>
+  <span class="ftag ftag-mtg active" data-task="mtg" onclick="toggleTask(this)">MTG</span>
+  <span class="ftag ftag-uni active" data-task="uni" onclick="toggleTask(this)">UNI</span>
+  <span class="ftag ftag-yt active" data-task="yt" onclick="toggleTask(this)">PRY撮影</span>
+  <span class="ftag ftag-live active" data-task="live" onclick="toggleTask(this)">LIVE/販売</span>
+  <span class="ftag ftag-notify active" data-task="notify" onclick="toggleTask(this)">告知</span>
+  <span class="ftag ftag-field active" data-task="field" onclick="toggleTask(this)">納品</span>
+  <span class="ftag ftag-fw active" data-task="fw" onclick="toggleTask(this)">FIELD</span>
+  <span class="ftag ftag-off active" data-task="off" onclick="toggleTask(this)">非稼働</span>
+</div>
+
+<div class="container">
+  <div class="timetable" id="timetable"></div>
+</div>
+
+<div class="meta">
+  <section class="panel">
+    <h2>日曜自動配信</h2>
+    <ul>
+      <li><strong>12:00</strong> メルマガ配信。予約。</li>
+      <li><strong>19:00</strong> UNI動画更新。予約。</li>
+      <li><strong>20:00</strong> YTコミュニティ投稿。予約。</li>
+      <li><strong>21:00</strong> LINE配信。予約。</li>
+    </ul>
+  </section>
+  <section class="panel">
+    <h2>変動週の差し替え</h2>
+    <ul>
+      <li><strong>水曜出張</strong>：水曜通常枠を丸ごと差し替え。木曜公開分は火曜18:00-19:00へ前倒し。</li>
+      <li><strong>土曜イベント</strong>：土曜通常枠を丸ごと差し替え。日曜公開分は金曜16:30-17:30へ前倒し。</li>
+      <li><strong>土曜買い物 / 仕入れ</strong>：イベント週と同じく土曜通常枠を差し替え。</li>
+    </ul>
+  </section>
+  <section class="panel">
+    <h2>v15の意図</h2>
+    <ul>
+      <li><strong>Shuto</strong>：0→1、最終判断、LIVE、出演に集中。</li>
+      <li><strong>Zastin</strong>：納品 / 告知 / サムネを前倒し固定。</li>
+      <li><strong>Issei</strong>：EC公開前QA、受注監視、スケジュールガードを固定。</li>
+      <li><strong>土曜</strong>：常設フル稼働ではなく予備運用日に落とす。</li>
+    </ul>
+  </section>
+</div>
+
+<div class="footer">v15 chart ｜ 読み取り専用 ｜ v14別保持 ｜ 作成日 2026/03/17</div>
+
+<script>
+const SH = 8;
+const EH = 24;
+const PX = 38;
+const DAY_NAMES = ["月", "火", "水", "木", "金", "土", "日"];
+const dayMeta = [
+  { th: "PRY撮影 + UNI + LIVE", c: "var(--pry)" },
+  { th: "一人ボード + PRY撮影", c: "var(--board)" },
+  { th: "Shuto一人デー / 個別深掘り", c: "var(--design)" },
+  { th: "SR / CO / 制作整理", c: "var(--mtg)" },
+  { th: "PRYブレスト + 公開", c: "var(--pry)" },
+  { th: "予備運用 / 差し替え枠", c: "var(--design)" },
+  { th: "非稼働 / 自動配信", c: "#555" }
+];
+const PLACE_LABELS = { cabinet: "CAB", atelier: "5F", studio: "4F", remote: "REM", fieldwork: "FW" };
+const ALL_MEMBERS = ["shuto", "all", "issei", "zastin"];
+const ALL_FLOORS = ["cabinet", "atelier", "studio", "remote", "fieldwork"];
+const ALL_TASKS = ["design", "board", "pry", "mtg", "uni", "yt", "live", "notify", "field", "fw", "off"];
+let activeMembers = new Set(ALL_MEMBERS);
+let activeFloors = new Set(ALL_FLOORS);
+let activeTasks = new Set(ALL_TASKS);
+
+const EVS = [
+  [
+    { s: 9, e: 10, t: "サンプルボード更新", u: "週初動の整理", c: "board", w: ["issei"], p: "atelier" },
+    { s: 9, e: 11, t: "PRY着用撮影", u: "週の核を撮る", c: "yt", w: ["shuto", "zastin"], p: "studio" },
+    { s: 10, e: 11, t: "アイテム管理", u: "撮影後工程の準備", c: "pry", w: ["issei"], p: "atelier" },
+    { s: 11, e: 11.5, t: "サンプル指示出し確認", u: "", c: "pry", w: ["shuto", "issei"], p: "atelier" },
+    { s: 11.5, e: 13, t: "PRYアイテム / ディテール撮影", u: "EC素材の回収", c: "yt", w: ["issei"], p: "studio" },
+    { s: 11.5, e: 14, t: "UNIブレスト / 台本", u: "午後撮影の構成", c: "uni", w: ["shuto", "zastin"], p: "atelier" },
+    { s: 13, e: 15, t: "レタッチ / 納品チェック", u: "EC公開用の品質担保", c: "yt", w: ["issei"], p: "studio" },
+    { s: 14, e: 17, t: "UNI撮影 / UNIトーク2本", u: "週次流量を作る", c: "uni", w: ["shuto", "zastin"], p: "studio" },
+    { s: 15, e: 17, t: "ECページ完成", u: "発売前の最終準備", c: "live", w: ["issei"], p: "studio" },
+    { s: 17, e: 19, t: "LIVE前リセット", u: "零点保護", c: "design", w: ["shuto"], p: "cabinet" },
+    { s: 17, e: 19, t: "告知最終 / サムネ最終", u: "", c: "notify", w: ["zastin"], p: "remote" },
+    { s: 17, e: 19, t: "EC最終確認 / 受注準備", u: "発売事故防止", c: "live", w: ["issei"], p: "remote" },
+    { s: 19, e: 19.5, t: "📢 YTコミュ配信", u: "販売告知", c: "notify", w: ["zastin"], p: "remote" },
+    { s: 20.25, e: 20.5, t: "📢 LINE配信", u: "販売告知", c: "notify", w: ["zastin"], p: "remote" },
+    { s: 20.5, e: 21.33, t: "🔴 発売直前LIVE", u: "", c: "live", w: ["shuto", "zastin"], p: "studio" },
+    { s: 21, e: 22, t: "🔴 PRY新作発売", u: "受注監視 / EC対応", c: "live", w: ["issei"], p: "remote" },
+    { s: 22, e: 22.5, t: "ボード再設計 / 後片付け", u: "", c: "board", w: ["all"], p: "atelier" }
+  ],
+  [
+    { s: 9, e: 10.5, t: "販売分析ボード更新", u: "月曜販売の振り返り", c: "live", w: ["issei"], p: "atelier" },
+    { s: 9, e: 11, t: "ボードワーク（一人）", u: "0→1の再定義", c: "board", w: ["shuto"], p: "cabinet" },
+    { s: 10.5, e: 12, t: "YT分析ボード更新", u: "投稿側の学習", c: "board", w: ["issei"], p: "atelier" },
+    { s: 11, e: 12.5, t: "PRY台本最終", u: "PRY撮影の芯を固める", c: "yt", w: ["shuto", "zastin"], p: "atelier" },
+    { s: 12.5, e: 14, t: "PRYトーク撮影", u: "PRY動画の素材化", c: "yt", w: ["shuto", "zastin"], p: "studio" },
+    { s: 12.5, e: 14, t: "サンプル進捗更新 / アイテム管理", u: "生産進行の見える化", c: "pry", w: ["issei"], p: "atelier" },
+    { s: 14, e: 15, t: "量産指示出し / サンプル返送", u: "生産を止めない", c: "pry", w: ["shuto", "issei"], p: "atelier" },
+    { s: 15.5, e: 17.5, t: "全体ボードワーク", u: "週次の方向合わせ", c: "board", w: ["all"], p: "atelier" },
+    { s: 18, e: 19, t: "🎬 水曜UNI動画 納品", u: "前日納品固定", c: "field", w: ["zastin"], p: "remote" }
+  ],
+  [
+    { s: 9, e: 18, t: "個人ワーク / デザイン / 戦略", u: "完全一人デー", c: "design", w: ["shuto"], p: "cabinet" },
+    { s: 9, e: 18, t: "サムネ / 告知 / 構成整理", u: "制作集中", c: "design", w: ["zastin"], p: "remote" },
+    { s: 9, e: 12, t: "最終発注 / 生産背景連絡", u: "生産の前倒し", c: "pry", w: ["issei"], p: "remote" },
+    { s: 13, e: 18, t: "顧客対応整理 / ロイヤル施策 / イベント準備", u: "運用日", c: "pry", w: ["issei"], p: "remote" },
+    { s: 18, e: 19, t: "🎬 木曜UNI動画 納品", u: "前日納品固定", c: "field", w: ["zastin"], p: "remote" },
+    { s: 19, e: 19.25, t: "UNI動画更新（自動公開確認）", u: "", c: "notify", w: ["zastin"], p: "remote" }
+  ],
+  [
+    { s: 9, e: 10, t: "サムネチェック＆修正", u: "週中の品質調整", c: "uni", w: ["shuto", "zastin"], p: "atelier" },
+    { s: 9, e: 10, t: "サンプルボード更新 / アイテム管理", u: "生産確認", c: "pry", w: ["issei"], p: "atelier" },
+    { s: 10.5, e: 12.5, t: "SR MTG（対面）", u: "生産設計", c: "mtg", w: ["all"], p: "atelier" },
+    { s: 13, e: 15, t: "株式会社CO MTG（対面）", u: "ジュエリー設計", c: "mtg", w: ["all"], p: "atelier" },
+    { s: 15, e: 17, t: "VLOG撮影 / サムネ仕上げ", u: "", c: "yt", w: ["zastin"], p: "atelier" },
+    { s: 15.5, e: 17, t: "業務委託デザインMTG変動枠 / ボード再設計", u: "", c: "mtg", w: ["shuto", "issei"], p: "atelier" },
+    { s: 17, e: 17.5, t: "全サムネ最終確認", u: "平日中に締める", c: "uni", w: ["shuto", "zastin"], p: "atelier" },
+    { s: 18, e: 19, t: "🎬 金曜PRY動画 納品", u: "前日納品固定", c: "field", w: ["zastin"], p: "remote" },
+    { s: 19, e: 19.25, t: "UNI動画更新（自動公開確認）", u: "", c: "notify", w: ["zastin"], p: "remote" }
+  ],
+  [
+    { s: 9, e: 10, t: "サンプルボード更新", u: "翌週仕込み", c: "pry", w: ["issei"], p: "atelier" },
+    { s: 10, e: 11, t: "商品ページQA / 公開準備", u: "公開前の門番", c: "live", w: ["issei"], p: "remote" },
+    { s: 9, e: 12.5, t: "PRYブレスト / 構成確定", u: "翌週の核決め", c: "pry", w: ["shuto", "zastin"], p: "atelier" },
+    { s: 13, e: 15, t: "UNI市場環境調査", u: "現場観測", c: "fw", w: ["shuto", "zastin"], p: "fieldwork" },
+    { s: 15.5, e: 16.5, t: "UNIブレスト / 台本", u: "調査を即反映", c: "uni", w: ["shuto", "zastin"], p: "atelier" },
+    { s: 16.5, e: 17.5, t: "🎬 土曜UNI動画 納品", u: "前倒し納品", c: "field", w: ["zastin"], p: "remote" },
+    { s: 16.5, e: 17.5, t: "商品ページQA最終 / SKU確認", u: "公開事故防止", c: "live", w: ["issei"], p: "remote" },
+    { s: 17.5, e: 19, t: "UNI撮影", u: "次流量の確保", c: "uni", w: ["shuto", "zastin"], p: "studio" },
+    { s: 19, e: 19.25, t: "PRY動画更新（自動公開確認）", u: "", c: "notify", w: ["issei"], p: "remote" },
+    { s: 19.25, e: 19.5, t: "PRY新作ページ公開", u: "EC", c: "live", w: ["issei"], p: "remote" },
+    { s: 19.5, e: 20, t: "週次ラップアップ", u: "差分確認だけで終える", c: "board", w: ["all"], p: "atelier" }
+  ],
+  [
+    { s: 9, e: 12, t: "戦略 / デザイン", u: "予備運用日", c: "design", w: ["shuto"], p: "cabinet" },
+    { s: 9, e: 12, t: "告知予約 / ショットリスト / 素材整理", u: "前倒し整理", c: "design", w: ["zastin"], p: "remote" },
+    { s: 9, e: 12, t: "LINE対応 / CS整理 / 工程表整理", u: "週次運用の掃除", c: "design", w: ["issei"], p: "remote" },
+    { s: 17, e: 18, t: "🎬 日曜UNI動画 納品", u: "日曜公開を前倒し", c: "field", w: ["zastin"], p: "remote" },
+    { s: 19, e: 19.25, t: "UNI動画更新（自動公開確認）", u: "", c: "notify", w: ["zastin"], p: "remote" }
+  ],
+  [
+    { s: 8, e: 24, t: "非稼働", u: "自動配信のみ", c: "off", w: ["all"], p: "remote" }
+  ]
+];
+
+function getVisible(dayIndex) {
+  return EVS[dayIndex].filter((ev) => {
+    const w = ev.w || ["all"];
+    if (activeMembers.size < ALL_MEMBERS.length) {
+      if (!activeMembers.has("all")) {
+        if (!w.includes("all") && !w.some((member) => activeMembers.has(member))) {
+          return false;
+        }
+      }
+    }
+    if (activeFloors.size < ALL_FLOORS.length && !activeFloors.has(ev.p || "atelier")) {
+      return false;
+    }
+    if (activeTasks.size < ALL_TASKS.length && !activeTasks.has(ev.c || "pry")) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function layoutDay(dayEvs) {
+  if (!dayEvs.length) return;
+  dayEvs.forEach((ev) => { ev._col = 0; ev._tc = 1; });
+  const order = dayEvs.map((_, index) => index).sort((a, b) => {
+    if (dayEvs[a].s !== dayEvs[b].s) return dayEvs[a].s - dayEvs[b].s;
+    return (dayEvs[b].e - dayEvs[b].s) - (dayEvs[a].e - dayEvs[a].s);
+  });
+  const ends = [];
+  order.forEach((index) => {
+    const ev = dayEvs[index];
+    let placed = false;
+    for (let col = 0; col < ends.length; col += 1) {
+      if (ends[col] <= ev.s) {
+        ends[col] = ev.e;
+        ev._col = col;
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) {
+      ev._col = ends.length;
+      ends.push(ev.e);
+    }
+  });
+  order.forEach((index) => {
+    const ev = dayEvs[index];
+    let maxCol = ev._col;
+    dayEvs.forEach((other) => {
+      if (other.s < ev.e && other.e > ev.s) {
+        maxCol = Math.max(maxCol, other._col);
+      }
+    });
+    ev._tc = maxCol + 1;
+  });
+}
+
+function render() {
+  const table = document.getElementById("timetable");
+  table.innerHTML = "";
+  const totalH = EH - SH;
+
+  const timeCol = document.createElement("div");
+  timeCol.className = "time-col";
+  timeCol.style.height = `${totalH * PX + 40}px`;
+  timeCol.style.marginTop = "40px";
+  for (let h = SH; h <= EH; h += 1) {
+    const label = document.createElement("div");
+    label.className = "time-label";
+    label.style.top = `${(h - SH) * PX}px`;
+    label.textContent = `${String(h === 24 ? 0 : h).padStart(2, "0")}:00`;
+    timeCol.appendChild(label);
+  }
+  table.appendChild(timeCol);
+
+  dayMeta.forEach((meta, dayIndex) => {
+    const col = document.createElement("div");
+    col.className = "day-col";
+
+    const hdr = document.createElement("div");
+    hdr.className = "day-hdr";
+    hdr.innerHTML = `<div class="day-name" style="color:${meta.c}">${DAY_NAMES[dayIndex]}</div><div class="day-theme">${meta.th}</div>`;
+    col.appendChild(hdr);
+
+    const body = document.createElement("div");
+    body.className = "day-body";
+    body.style.height = `${totalH * PX}px`;
+
+    for (let h = 0; h <= totalH; h += 1) {
+      const line = document.createElement("div");
+      line.className = "hline";
+      line.style.top = `${h * PX}px`;
+      body.appendChild(line);
+    }
+
+    const visible = getVisible(dayIndex).map((ev) => ({ ...ev }));
+    layoutDay(visible);
+    visible.forEach((ev) => {
+      const el = document.createElement("div");
+      el.className = `ev ev-${ev.c}`;
+      el.style.top = `${(ev.s - SH) * PX}px`;
+      el.style.height = `${Math.max((ev.e - ev.s) * PX - 2, 14)}px`;
+      if (ev._tc > 1) {
+        const width = 100 / ev._tc;
+        el.style.left = `calc(${ev._col * width}% + 1px)`;
+        el.style.width = `calc(${width}% - 2px)`;
+        el.style.right = "auto";
+      }
+      const memberTag = ev.w && !ev.w.includes("all") ? ` [${ev.w.join(",")}]` : "";
+      const placeTag = PLACE_LABELS[ev.p] || "";
+      let html = `<div class="ev-t">${ev.t}${memberTag}</div>`;
+      const height = Math.max((ev.e - ev.s) * PX - 2, 14);
+      if (height > 28) {
+        html += `<div class="ev-s">${ev.u || ""}</div><div class="ev-p">${placeTag}</div>`;
+      } else if (height > 20) {
+        html += `<div class="ev-s">${placeTag}${ev.u ? ` — ${ev.u}` : ""}</div>`;
+      }
+      el.innerHTML = html;
+      body.appendChild(el);
+    });
+
+    col.appendChild(body);
+    table.appendChild(col);
+  });
+}
+
+function toggle(set, allValues, selector, attr, element) {
+  const value = element.dataset[attr];
+  const tags = document.querySelectorAll(selector);
+  if (set.size === allValues.length) {
+    set.clear();
+    set.add(value);
+    tags.forEach((tag) => tag.classList.toggle("active", tag.dataset[attr] === value));
+  } else if (set.has(value) && set.size === 1) {
+    allValues.forEach((item) => set.add(item));
+    tags.forEach((tag) => tag.classList.add("active"));
+  } else if (set.has(value)) {
+    set.delete(value);
+    element.classList.remove("active");
+  } else {
+    set.add(value);
+    element.classList.add("active");
+  }
+  render();
+}
+
+function toggleMember(element) {
+  toggle(activeMembers, ALL_MEMBERS, ".ftag[data-member]", "member", element);
+}
+function toggleFloor(element) {
+  toggle(activeFloors, ALL_FLOORS, ".ftag[data-floor]", "floor", element);
+}
+function toggleTask(element) {
+  toggle(activeTasks, ALL_TASKS, ".ftag[data-task]", "task", element);
+}
+
+render();
+</script>
+</body>
+</html>
