@@ -77,7 +77,9 @@ a { color: inherit; }
   gap: 8px;
   flex-wrap: wrap;
 }
-.header .actions a {
+.header .actions a,
+.header .actions button {
+  appearance: none;
   font-size: 10px;
   text-decoration: none;
   border: 1px solid var(--border);
@@ -85,10 +87,16 @@ a { color: inherit; }
   color: var(--text-dim);
   padding: 5px 10px;
   border-radius: 4px;
+  cursor: pointer;
 }
-.header .actions a:hover {
+.header .actions a:hover,
+.header .actions button:hover {
   border-color: var(--pry);
   color: var(--pry);
+}
+.header .actions button.danger:hover {
+  border-color: #e85d5d;
+  color: #e85d5d;
 }
 .filter-bar {
   padding: 6px 20px;
@@ -188,6 +196,7 @@ a { color: inherit; }
 }
 .day-body {
   position: relative;
+  cursor: crosshair;
 }
 .hline {
   position: absolute;
@@ -209,6 +218,16 @@ a { color: inherit; }
   border-left: 2px solid;
   z-index: 1;
 }
+.ev:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  z-index: 5;
+}
+.ev.dragging {
+  opacity: 0.85;
+  z-index: 50;
+  cursor: grabbing;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
 .ev-t {
   font-weight: 600;
   white-space: nowrap;
@@ -228,6 +247,17 @@ a { color: inherit; }
   font-size: 6px;
   letter-spacing: 0.03em;
   opacity: 0.7;
+}
+.ev .resize-handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: ns-resize;
+}
+.ev .resize-handle:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 .ev-board { background: var(--board-dim); border-color: var(--board); color: #c0b4f0; }
 .ev-design { background: var(--design-dim); border-color: var(--design); color: #fff; }
@@ -281,6 +311,154 @@ a { color: inherit; }
   color: var(--text-dim);
   border-top: 1px solid var(--border);
 }
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.open {
+  display: flex;
+}
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  width: 340px;
+  max-width: 90vw;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.modal h3 {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--pry);
+  margin-bottom: 14px;
+}
+.modal label {
+  display: block;
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+  margin-top: 10px;
+}
+.modal input,
+.modal select {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 11px;
+}
+.modal input:focus,
+.modal select:focus {
+  outline: none;
+  border-color: var(--pry);
+}
+.modal .time-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 6px;
+  align-items: end;
+}
+.modal .time-row span {
+  text-align: center;
+  padding-bottom: 6px;
+  color: var(--text-dim);
+  font-size: 11px;
+}
+.modal .btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+.modal .btn-row button {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 10px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.modal .btn-save {
+  background: var(--pry);
+  border-color: var(--pry);
+  color: #111;
+  font-weight: 600;
+}
+.modal .btn-save:hover {
+  opacity: 0.85;
+}
+.modal .btn-cancel {
+  background: transparent;
+  color: var(--text-dim);
+}
+.modal .btn-cancel:hover {
+  border-color: var(--text-dim);
+}
+.modal .btn-delete {
+  background: transparent;
+  color: #e85d5d;
+  border-color: #e85d5d;
+}
+.modal .btn-delete:hover {
+  background: rgba(232, 93, 93, 0.15);
+}
+.modal .btn-dup {
+  background: transparent;
+  color: #80b0e8;
+  border-color: #80b0e8;
+  margin-right: auto;
+}
+.modal .btn-dup:hover {
+  background: rgba(128, 176, 232, 0.15);
+}
+.check-row {
+  display: flex;
+  gap: 14px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text);
+  cursor: pointer;
+}
+.check-item input[type="checkbox"] {
+  accent-color: var(--pry);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--surface2);
+  border: 1px solid var(--pry);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 10px;
+  color: var(--pry);
+  z-index: 300;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+}
 @media (max-width: 960px) {
   .meta {
     grid-template-columns: 1fr;
@@ -294,12 +472,17 @@ a { color: inherit; }
   <h1>PRY 週間スケジュール</h1>
   <span class="ver">v15 — 2026/03/17</span>
   <div class="actions">
+    <button type="button" onclick="addEvent()">＋ 追加</button>
+    <button type="button" onclick="overwriteDefault()">保存</button>
+    <button type="button" onclick="saveAsHtml()">📥 上書き保存</button>
+    <button type="button" onclick="shareSchedule()">🔗 共有リンク</button>
+    <button type="button" class="danger" onclick="resetData()">リセット</button>
     <a href="https://shuto-gif.github.io/pry-schedule/" target="_blank" rel="noreferrer">現行 v14</a>
     <a href="https://github.com/shuto-gif/pry-schedule-v15" target="_blank" rel="noreferrer">GitHub</a>
   </div>
   <div class="summary">
     v14を上書きせずに切り出した、v15の独立チャート。<br>
-    `all` の乱用を削り、`自動配信` と `変動週` を分離し、Shutoの水曜一人デーと Issei の公開門番役を構造で守る。
+    `all` の乱用を削り、`自動配信` と `変動週` を分離し、Shutoの水曜一人デーと Issei の公開門番役を構造で守る。v14と同様に編集・共有・上書き保存が可能。
   </div>
 </div>
 
@@ -368,140 +551,383 @@ a { color: inherit; }
   </section>
 </div>
 
-<div class="footer">v15 chart ｜ 読み取り専用 ｜ v14別保持 ｜ 作成日 2026/03/17</div>
+<div class="footer">v15 chart ｜ 編集可能 ｜ v14別保持 ｜ 作成日 2026/03/17</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">イベント編集</h3>
+    <label>タイトル</label>
+    <input type="text" id="ed-title">
+    <label>担当</label>
+    <div class="check-row">
+      <label class="check-item"><input type="checkbox" id="cb-all"> all</label>
+      <label class="check-item"><input type="checkbox" id="cb-shuto"> shuto</label>
+      <label class="check-item"><input type="checkbox" id="cb-zastin"> zastin</label>
+      <label class="check-item"><input type="checkbox" id="cb-issei"> issei</label>
+    </div>
+    <label>メモ</label>
+    <input type="text" id="ed-note">
+    <div class="time-row">
+      <div><label>開始</label><input type="time" id="ed-start" step="900"></div>
+      <span>〜</span>
+      <div><label>終了</label><input type="time" id="ed-end" step="900"></div>
+    </div>
+    <label>曜日</label>
+    <select id="ed-day">
+      <option value="0">月</option><option value="1">火</option><option value="2">水</option>
+      <option value="3">木</option><option value="4">金</option><option value="5">土</option><option value="6">日</option>
+    </select>
+    <label>カテゴリ</label>
+    <select id="ed-cat">
+      <option value="design">個人ワーク</option>
+      <option value="board">ボード</option>
+      <option value="pry">PRY運用</option>
+      <option value="mtg">MTG</option>
+      <option value="uni">UNI</option>
+      <option value="yt">PRY撮影</option>
+      <option value="live">LIVE / 販売</option>
+      <option value="notify">告知</option>
+      <option value="field">納品</option>
+      <option value="fw">FIELD</option>
+      <option value="off">非稼働</option>
+      <option value="rest">休憩</option>
+    </select>
+    <label>場所</label>
+    <select id="ed-place">
+      <option value="cabinet">5F CABINET</option>
+      <option value="atelier">5F ATELIER</option>
+      <option value="studio">4F STUDIO</option>
+      <option value="remote">REMOTE</option>
+      <option value="fieldwork">FIELDWORK</option>
+    </select>
+    <div class="btn-row">
+      <button class="btn-delete" id="btn-delete" onclick="deleteEvent()">削除</button>
+      <button class="btn-dup" id="btn-dup" onclick="dupEvent()">複製</button>
+      <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
+      <button class="btn-save" onclick="saveEvent()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-const SH = 8;
-const EH = 24;
-const PX = 38;
-const DAY_NAMES = ["月", "火", "水", "木", "金", "土", "日"];
+const SH = 8, EH = 24, PX = 38, SNAP = 0.25;
+const DAY_NAMES = ['月', '火', '水', '木', '金', '土', '日'];
 const dayMeta = [
-  { th: "PRY撮影 + UNI + LIVE", c: "var(--pry)" },
-  { th: "一人ボード + PRY撮影", c: "var(--board)" },
-  { th: "Shuto一人デー / 個別深掘り", c: "var(--design)" },
-  { th: "SR / CO / 制作整理", c: "var(--mtg)" },
-  { th: "PRYブレスト + 公開", c: "var(--pry)" },
-  { th: "予備運用 / 差し替え枠", c: "var(--design)" },
-  { th: "非稼働 / 自動配信", c: "#555" }
+  { th: 'PRY撮影 + UNI + LIVE', c: 'var(--pry)' },
+  { th: '一人ボード + PRY撮影', c: 'var(--board)' },
+  { th: 'Shuto一人デー / 個別深掘り', c: 'var(--design)' },
+  { th: 'SR / 株式会社CO / 制作整理', c: 'var(--mtg)' },
+  { th: 'PRYブレスト + 公開', c: 'var(--pry)' },
+  { th: '予備運用 / 差し替え枠', c: 'var(--design)' },
+  { th: '非稼働 / 自動配信', c: '#555' }
 ];
-const PLACE_LABELS = { cabinet: "CAB", atelier: "5F", studio: "4F", remote: "REM", fieldwork: "FW" };
-const ALL_MEMBERS = ["shuto", "all", "issei", "zastin"];
-const ALL_FLOORS = ["cabinet", "atelier", "studio", "remote", "fieldwork"];
-const ALL_TASKS = ["design", "board", "pry", "mtg", "uni", "yt", "live", "notify", "field", "fw", "off"];
+const PLACE_LABELS = { cabinet: 'CAB', atelier: '5F', studio: '4F', remote: 'REM', fieldwork: 'FW' };
+const PAGE_FILTER = null;
+
+const DEFAULT_EVS = [
+  [
+    { s: 9, e: 10, t: 'サンプルボード更新', u: '週初動の整理', c: 'board', w: ['issei'], p: 'atelier' },
+    { s: 9, e: 11, t: 'PRY着用撮影', u: '週の核を撮る', c: 'yt', w: ['shuto', 'zastin'], p: 'studio' },
+    { s: 10, e: 11, t: 'アイテム管理', u: '撮影後工程の準備', c: 'pry', w: ['issei'], p: 'atelier' },
+    { s: 11, e: 11.5, t: 'サンプル指示出し確認', u: '', c: 'pry', w: ['shuto', 'issei'], p: 'atelier' },
+    { s: 11.5, e: 13, t: 'PRYアイテム / ディテール撮影', u: 'EC素材の回収', c: 'yt', w: ['issei'], p: 'studio' },
+    { s: 11.5, e: 14, t: 'UNIブレスト / 台本', u: '午後撮影の構成', c: 'uni', w: ['shuto', 'zastin'], p: 'atelier' },
+    { s: 13, e: 15, t: 'レタッチ / 納品チェック', u: 'EC公開用の品質担保', c: 'yt', w: ['issei'], p: 'studio' },
+    { s: 14, e: 17, t: 'UNI撮影 / UNIトーク2本', u: '週次流量を作る', c: 'uni', w: ['shuto', 'zastin'], p: 'studio' },
+    { s: 15, e: 17, t: 'ECページ完成', u: '発売前の最終準備', c: 'live', w: ['issei'], p: 'studio' },
+    { s: 17, e: 19, t: 'LIVE前リセット', u: '零点保護', c: 'design', w: ['shuto'], p: 'cabinet' },
+    { s: 17, e: 19, t: '告知最終 / サムネ最終', u: '', c: 'notify', w: ['zastin'], p: 'remote' },
+    { s: 17, e: 19, t: 'EC最終確認 / 受注準備', u: '発売事故防止', c: 'live', w: ['issei'], p: 'remote' },
+    { s: 19, e: 19.5, t: '📢 YTコミュ配信', u: '販売告知', c: 'notify', w: ['zastin'], p: 'remote' },
+    { s: 20.25, e: 20.5, t: '📢 LINE配信', u: '販売告知', c: 'notify', w: ['zastin'], p: 'remote' },
+    { s: 20.5, e: 21.33, t: '🔴 発売直前LIVE', u: '', c: 'live', w: ['shuto', 'zastin'], p: 'studio' },
+    { s: 21, e: 22, t: '🔴 PRY新作発売', u: '受注監視 / EC対応', c: 'live', w: ['issei'], p: 'remote' },
+    { s: 22, e: 22.5, t: 'ボード再設計 / 後片付け', u: '', c: 'board', w: ['all'], p: 'atelier' }
+  ],
+  [
+    { s: 9, e: 10.5, t: '販売分析ボード更新', u: '月曜販売の振り返り', c: 'live', w: ['issei'], p: 'atelier' },
+    { s: 9, e: 11, t: 'ボードワーク（一人）', u: '0→1の再定義', c: 'board', w: ['shuto'], p: 'cabinet' },
+    { s: 10.5, e: 12, t: 'YT分析ボード更新', u: '投稿側の学習', c: 'board', w: ['issei'], p: 'atelier' },
+    { s: 11, e: 12.5, t: 'PRY台本最終', u: 'PRY撮影の芯を固める', c: 'yt', w: ['shuto', 'zastin'], p: 'atelier' },
+    { s: 12.5, e: 14, t: 'PRYトーク撮影', u: 'PRY動画の素材化', c: 'yt', w: ['shuto', 'zastin'], p: 'studio' },
+    { s: 12.5, e: 14, t: 'サンプル進捗更新 / アイテム管理', u: '生産進行の見える化', c: 'pry', w: ['issei'], p: 'atelier' },
+    { s: 14, e: 15, t: '量産指示出し / サンプル返送', u: '生産を止めない', c: 'pry', w: ['shuto', 'issei'], p: 'atelier' },
+    { s: 15.5, e: 17.5, t: '全体ボードワーク', u: '週次の方向合わせ', c: 'board', w: ['all'], p: 'atelier' },
+    { s: 18, e: 19, t: '🎬 水曜UNI動画 納品', u: '前日納品固定', c: 'field', w: ['zastin'], p: 'remote' }
+  ],
+  [
+    { s: 9, e: 18, t: '個人ワーク / デザイン / 戦略', u: '完全一人デー', c: 'design', w: ['shuto'], p: 'cabinet' },
+    { s: 9, e: 18, t: 'サムネ / 告知 / 構成整理', u: '制作集中', c: 'design', w: ['zastin'], p: 'remote' },
+    { s: 9, e: 12, t: '最終発注 / 生産背景連絡', u: '生産の前倒し', c: 'pry', w: ['issei'], p: 'remote' },
+    { s: 13, e: 18, t: '顧客対応整理 / ロイヤル施策 / イベント準備', u: '運用日', c: 'pry', w: ['issei'], p: 'remote' },
+    { s: 18, e: 19, t: '🎬 木曜UNI動画 納品', u: '前日納品固定', c: 'field', w: ['zastin'], p: 'remote' },
+    { s: 19, e: 19.25, t: 'UNI動画更新（自動公開確認）', u: '', c: 'notify', w: ['zastin'], p: 'remote' }
+  ],
+  [
+    { s: 9, e: 10, t: 'サムネチェック＆修正', u: '週中の品質調整', c: 'uni', w: ['shuto', 'zastin'], p: 'atelier' },
+    { s: 9, e: 10, t: 'サンプルボード更新 / アイテム管理', u: '生産確認', c: 'pry', w: ['issei'], p: 'atelier' },
+    { s: 10.5, e: 12.5, t: 'SR MTG（対面）', u: '生産設計', c: 'mtg', w: ['all'], p: 'atelier' },
+    { s: 13, e: 15, t: '株式会社CO MTG（対面）', u: 'ジュエリー設計', c: 'mtg', w: ['all'], p: 'atelier' },
+    { s: 15, e: 17, t: 'VLOG撮影 / サムネ仕上げ', u: '', c: 'yt', w: ['zastin'], p: 'atelier' },
+    { s: 15.5, e: 17, t: '業務委託デザインMTG変動枠 / ボード再設計', u: '', c: 'mtg', w: ['shuto', 'issei'], p: 'atelier' },
+    { s: 17, e: 17.5, t: '全サムネ最終確認', u: '平日中に締める', c: 'uni', w: ['shuto', 'zastin'], p: 'atelier' },
+    { s: 18, e: 19, t: '🎬 金曜PRY動画 納品', u: '前日納品固定', c: 'field', w: ['zastin'], p: 'remote' },
+    { s: 19, e: 19.25, t: 'UNI動画更新（自動公開確認）', u: '', c: 'notify', w: ['zastin'], p: 'remote' }
+  ],
+  [
+    { s: 9, e: 10, t: 'サンプルボード更新', u: '翌週仕込み', c: 'pry', w: ['issei'], p: 'atelier' },
+    { s: 10, e: 11, t: '商品ページQA / 公開準備', u: '公開前の門番', c: 'live', w: ['issei'], p: 'remote' },
+    { s: 9, e: 12.5, t: 'PRYブレスト / 構成確定', u: '翌週の核決め', c: 'pry', w: ['shuto', 'zastin'], p: 'atelier' },
+    { s: 13, e: 15, t: 'UNI市場環境調査', u: '現場観測', c: 'fw', w: ['shuto', 'zastin'], p: 'fieldwork' },
+    { s: 15.5, e: 16.5, t: 'UNIブレスト / 台本', u: '調査を即反映', c: 'uni', w: ['shuto', 'zastin'], p: 'atelier' },
+    { s: 16.5, e: 17.5, t: '🎬 土曜UNI動画 納品', u: '前倒し納品', c: 'field', w: ['zastin'], p: 'remote' },
+    { s: 16.5, e: 17.5, t: '商品ページQA最終 / SKU確認', u: '公開事故防止', c: 'live', w: ['issei'], p: 'remote' },
+    { s: 17.5, e: 19, t: 'UNI撮影', u: '次流量の確保', c: 'uni', w: ['shuto', 'zastin'], p: 'studio' },
+    { s: 19, e: 19.25, t: 'PRY動画更新（自動公開確認）', u: '', c: 'notify', w: ['issei'], p: 'remote' },
+    { s: 19.25, e: 19.5, t: 'PRY新作ページ公開', u: 'EC', c: 'live', w: ['issei'], p: 'remote' },
+    { s: 19.5, e: 20, t: '週次ラップアップ', u: '差分確認だけで終える', c: 'board', w: ['all'], p: 'atelier' }
+  ],
+  [
+    { s: 9, e: 12, t: '戦略 / デザイン', u: '予備運用日', c: 'design', w: ['shuto'], p: 'cabinet' },
+    { s: 9, e: 12, t: '告知予約 / ショットリスト / 素材整理', u: '前倒し整理', c: 'design', w: ['zastin'], p: 'remote' },
+    { s: 9, e: 12, t: 'LINE対応 / CS整理 / 工程表整理', u: '週次運用の掃除', c: 'design', w: ['issei'], p: 'remote' },
+    { s: 17, e: 18, t: '🎬 日曜UNI動画 納品', u: '日曜公開を前倒し', c: 'field', w: ['zastin'], p: 'remote' },
+    { s: 19, e: 19.25, t: 'UNI動画更新（自動公開確認）', u: '', c: 'notify', w: ['zastin'], p: 'remote' }
+  ],
+  [
+    { s: 8, e: 24, t: '非稼働', u: '自動配信のみ', c: 'off', w: ['all'], p: 'remote' }
+  ]
+];
+
+const LS_KEY = 'pry-schedule-v15';
+let evs;
+let dragState = null;
+let editTarget = null;
+let dayBodies = [];
+const ALL_MEMBERS = ['shuto', 'all', 'issei', 'zastin'];
+const ALL_FLOORS = ['cabinet', 'atelier', 'studio', 'remote', 'fieldwork'];
+const ALL_TASKS = ['design', 'board', 'pry', 'mtg', 'uni', 'yt', 'live', 'notify', 'field', 'fw', 'off'];
 let activeMembers = new Set(ALL_MEMBERS);
 let activeFloors = new Set(ALL_FLOORS);
 let activeTasks = new Set(ALL_TASKS);
 
-const EVS = [
-  [
-    { s: 9, e: 10, t: "サンプルボード更新", u: "週初動の整理", c: "board", w: ["issei"], p: "atelier" },
-    { s: 9, e: 11, t: "PRY着用撮影", u: "週の核を撮る", c: "yt", w: ["shuto", "zastin"], p: "studio" },
-    { s: 10, e: 11, t: "アイテム管理", u: "撮影後工程の準備", c: "pry", w: ["issei"], p: "atelier" },
-    { s: 11, e: 11.5, t: "サンプル指示出し確認", u: "", c: "pry", w: ["shuto", "issei"], p: "atelier" },
-    { s: 11.5, e: 13, t: "PRYアイテム / ディテール撮影", u: "EC素材の回収", c: "yt", w: ["issei"], p: "studio" },
-    { s: 11.5, e: 14, t: "UNIブレスト / 台本", u: "午後撮影の構成", c: "uni", w: ["shuto", "zastin"], p: "atelier" },
-    { s: 13, e: 15, t: "レタッチ / 納品チェック", u: "EC公開用の品質担保", c: "yt", w: ["issei"], p: "studio" },
-    { s: 14, e: 17, t: "UNI撮影 / UNIトーク2本", u: "週次流量を作る", c: "uni", w: ["shuto", "zastin"], p: "studio" },
-    { s: 15, e: 17, t: "ECページ完成", u: "発売前の最終準備", c: "live", w: ["issei"], p: "studio" },
-    { s: 17, e: 19, t: "LIVE前リセット", u: "零点保護", c: "design", w: ["shuto"], p: "cabinet" },
-    { s: 17, e: 19, t: "告知最終 / サムネ最終", u: "", c: "notify", w: ["zastin"], p: "remote" },
-    { s: 17, e: 19, t: "EC最終確認 / 受注準備", u: "発売事故防止", c: "live", w: ["issei"], p: "remote" },
-    { s: 19, e: 19.5, t: "📢 YTコミュ配信", u: "販売告知", c: "notify", w: ["zastin"], p: "remote" },
-    { s: 20.25, e: 20.5, t: "📢 LINE配信", u: "販売告知", c: "notify", w: ["zastin"], p: "remote" },
-    { s: 20.5, e: 21.33, t: "🔴 発売直前LIVE", u: "", c: "live", w: ["shuto", "zastin"], p: "studio" },
-    { s: 21, e: 22, t: "🔴 PRY新作発売", u: "受注監視 / EC対応", c: "live", w: ["issei"], p: "remote" },
-    { s: 22, e: 22.5, t: "ボード再設計 / 後片付け", u: "", c: "board", w: ["all"], p: "atelier" }
-  ],
-  [
-    { s: 9, e: 10.5, t: "販売分析ボード更新", u: "月曜販売の振り返り", c: "live", w: ["issei"], p: "atelier" },
-    { s: 9, e: 11, t: "ボードワーク（一人）", u: "0→1の再定義", c: "board", w: ["shuto"], p: "cabinet" },
-    { s: 10.5, e: 12, t: "YT分析ボード更新", u: "投稿側の学習", c: "board", w: ["issei"], p: "atelier" },
-    { s: 11, e: 12.5, t: "PRY台本最終", u: "PRY撮影の芯を固める", c: "yt", w: ["shuto", "zastin"], p: "atelier" },
-    { s: 12.5, e: 14, t: "PRYトーク撮影", u: "PRY動画の素材化", c: "yt", w: ["shuto", "zastin"], p: "studio" },
-    { s: 12.5, e: 14, t: "サンプル進捗更新 / アイテム管理", u: "生産進行の見える化", c: "pry", w: ["issei"], p: "atelier" },
-    { s: 14, e: 15, t: "量産指示出し / サンプル返送", u: "生産を止めない", c: "pry", w: ["shuto", "issei"], p: "atelier" },
-    { s: 15.5, e: 17.5, t: "全体ボードワーク", u: "週次の方向合わせ", c: "board", w: ["all"], p: "atelier" },
-    { s: 18, e: 19, t: "🎬 水曜UNI動画 納品", u: "前日納品固定", c: "field", w: ["zastin"], p: "remote" }
-  ],
-  [
-    { s: 9, e: 18, t: "個人ワーク / デザイン / 戦略", u: "完全一人デー", c: "design", w: ["shuto"], p: "cabinet" },
-    { s: 9, e: 18, t: "サムネ / 告知 / 構成整理", u: "制作集中", c: "design", w: ["zastin"], p: "remote" },
-    { s: 9, e: 12, t: "最終発注 / 生産背景連絡", u: "生産の前倒し", c: "pry", w: ["issei"], p: "remote" },
-    { s: 13, e: 18, t: "顧客対応整理 / ロイヤル施策 / イベント準備", u: "運用日", c: "pry", w: ["issei"], p: "remote" },
-    { s: 18, e: 19, t: "🎬 木曜UNI動画 納品", u: "前日納品固定", c: "field", w: ["zastin"], p: "remote" },
-    { s: 19, e: 19.25, t: "UNI動画更新（自動公開確認）", u: "", c: "notify", w: ["zastin"], p: "remote" }
-  ],
-  [
-    { s: 9, e: 10, t: "サムネチェック＆修正", u: "週中の品質調整", c: "uni", w: ["shuto", "zastin"], p: "atelier" },
-    { s: 9, e: 10, t: "サンプルボード更新 / アイテム管理", u: "生産確認", c: "pry", w: ["issei"], p: "atelier" },
-    { s: 10.5, e: 12.5, t: "SR MTG（対面）", u: "生産設計", c: "mtg", w: ["all"], p: "atelier" },
-    { s: 13, e: 15, t: "株式会社CO MTG（対面）", u: "ジュエリー設計", c: "mtg", w: ["all"], p: "atelier" },
-    { s: 15, e: 17, t: "VLOG撮影 / サムネ仕上げ", u: "", c: "yt", w: ["zastin"], p: "atelier" },
-    { s: 15.5, e: 17, t: "業務委託デザインMTG変動枠 / ボード再設計", u: "", c: "mtg", w: ["shuto", "issei"], p: "atelier" },
-    { s: 17, e: 17.5, t: "全サムネ最終確認", u: "平日中に締める", c: "uni", w: ["shuto", "zastin"], p: "atelier" },
-    { s: 18, e: 19, t: "🎬 金曜PRY動画 納品", u: "前日納品固定", c: "field", w: ["zastin"], p: "remote" },
-    { s: 19, e: 19.25, t: "UNI動画更新（自動公開確認）", u: "", c: "notify", w: ["zastin"], p: "remote" }
-  ],
-  [
-    { s: 9, e: 10, t: "サンプルボード更新", u: "翌週仕込み", c: "pry", w: ["issei"], p: "atelier" },
-    { s: 10, e: 11, t: "商品ページQA / 公開準備", u: "公開前の門番", c: "live", w: ["issei"], p: "remote" },
-    { s: 9, e: 12.5, t: "PRYブレスト / 構成確定", u: "翌週の核決め", c: "pry", w: ["shuto", "zastin"], p: "atelier" },
-    { s: 13, e: 15, t: "UNI市場環境調査", u: "現場観測", c: "fw", w: ["shuto", "zastin"], p: "fieldwork" },
-    { s: 15.5, e: 16.5, t: "UNIブレスト / 台本", u: "調査を即反映", c: "uni", w: ["shuto", "zastin"], p: "atelier" },
-    { s: 16.5, e: 17.5, t: "🎬 土曜UNI動画 納品", u: "前倒し納品", c: "field", w: ["zastin"], p: "remote" },
-    { s: 16.5, e: 17.5, t: "商品ページQA最終 / SKU確認", u: "公開事故防止", c: "live", w: ["issei"], p: "remote" },
-    { s: 17.5, e: 19, t: "UNI撮影", u: "次流量の確保", c: "uni", w: ["shuto", "zastin"], p: "studio" },
-    { s: 19, e: 19.25, t: "PRY動画更新（自動公開確認）", u: "", c: "notify", w: ["issei"], p: "remote" },
-    { s: 19.25, e: 19.5, t: "PRY新作ページ公開", u: "EC", c: "live", w: ["issei"], p: "remote" },
-    { s: 19.5, e: 20, t: "週次ラップアップ", u: "差分確認だけで終える", c: "board", w: ["all"], p: "atelier" }
-  ],
-  [
-    { s: 9, e: 12, t: "戦略 / デザイン", u: "予備運用日", c: "design", w: ["shuto"], p: "cabinet" },
-    { s: 9, e: 12, t: "告知予約 / ショットリスト / 素材整理", u: "前倒し整理", c: "design", w: ["zastin"], p: "remote" },
-    { s: 9, e: 12, t: "LINE対応 / CS整理 / 工程表整理", u: "週次運用の掃除", c: "design", w: ["issei"], p: "remote" },
-    { s: 17, e: 18, t: "🎬 日曜UNI動画 納品", u: "日曜公開を前倒し", c: "field", w: ["zastin"], p: "remote" },
-    { s: 19, e: 19.25, t: "UNI動画更新（自動公開確認）", u: "", c: "notify", w: ["zastin"], p: "remote" }
-  ],
-  [
-    { s: 8, e: 24, t: "非稼働", u: "自動配信のみ", c: "off", w: ["all"], p: "remote" }
-  ]
-];
+function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
-function getVisible(dayIndex) {
-  return EVS[dayIndex].filter((ev) => {
-    const w = ev.w || ["all"];
+function encodeShareData(data) {
+  const json = JSON.stringify(data);
+  const bytes = new TextEncoder().encode(json);
+  let bin = '';
+  bytes.forEach((byte) => { bin += String.fromCharCode(byte); });
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeShareData(str) {
+  const b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+function normalizeEvents(data) {
+  data.forEach((day) => day.forEach((ev) => {
+    if (!ev.w) ev.w = ['all'];
+    if (!ev.p) ev.p = 'atelier';
+    if (ev.p === 'online') ev.p = 'remote';
+  }));
+}
+
+function loadData() {
+  const params = new URLSearchParams(location.search);
+  const shareParam = params.get('share');
+  if (shareParam) {
+    try {
+      evs = decodeShareData(shareParam);
+      normalizeEvents(evs);
+      toast('共有スケジュールを読み込みました');
+      return;
+    } catch (error) {
+      console.warn('share param decode failed', error);
+    }
+  }
+  const raw = localStorage.getItem(LS_KEY);
+  if (raw) {
+    try {
+      evs = JSON.parse(raw);
+      normalizeEvents(evs);
+    } catch (error) {
+      evs = deepClone(DEFAULT_EVS);
+    }
+  } else {
+    evs = deepClone(DEFAULT_EVS);
+  }
+  saveData();
+}
+
+async function saveAsHtml() {
+  let html;
+  try {
+    const sourceUrl = (location.origin && location.origin !== 'null')
+      ? `${location.origin}${location.pathname}`
+      : location.href;
+    const res = await fetch(sourceUrl);
+    html = await res.text();
+    const newEvs = JSON.stringify(evs, null, 2);
+    html = html.replace(/const DEFAULT_EVS = \[[\s\S]*?\n\];/, `const DEFAULT_EVS = ${newEvs};`);
+  } catch (error) {
+    toast('HTML取得失敗');
+    return;
+  }
+
+  let pat = localStorage.getItem('gh-pat');
+  if (!pat) {
+    pat = prompt('GitHubアクセストークンを入力してください\n（Settings → Developer settings → Personal access tokens → repo スコープ）\n\n※ 次回から自動保存されます');
+    if (!pat) return;
+    localStorage.setItem('gh-pat', pat);
+  }
+
+  const apiUrl = 'https://api.github.com/repos/shuto-gif/pry-schedule-v15/contents/index.html';
+  const headers = { Authorization: `token ${pat}`, 'Content-Type': 'application/json' };
+
+  try {
+    const getRes = await fetch(apiUrl, { headers });
+    if (!getRes.ok) throw new Error(`GET ${getRes.status}`);
+    const { sha } = await getRes.json();
+
+    const bytes = new TextEncoder().encode(html);
+    let bin = '';
+    bytes.forEach((byte) => { bin += String.fromCharCode(byte); });
+    const content = btoa(bin);
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
+        message: 'v15 schedule update from browser',
+        content,
+        sha
+      })
+    });
+    if (putRes.ok) {
+      toast('GitHubに保存しました ✓');
+    } else {
+      const err = await putRes.json();
+      if (putRes.status === 401) localStorage.removeItem('gh-pat');
+      throw new Error(err.message || putRes.status);
+    }
+  } catch (error) {
+    console.error(error);
+    toast('API失敗 → ダウンロードに切替');
+    setTimeout(() => {
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'PRY_週間スケジュール_v15_chart.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }, 600);
+  }
+}
+
+function shareSchedule() {
+  const encoded = encodeShareData(evs);
+  const url = `https://shuto-gif.github.io/pry-schedule-v15/?share=${encoded}`;
+  navigator.clipboard.writeText(url).then(() => {
+    toast('共有リンクをコピーしました');
+  }).catch(() => {
+    prompt('下記URLをコピーしてください：', url);
+  });
+}
+
+function saveData() {
+  localStorage.setItem(LS_KEY, JSON.stringify(evs));
+}
+
+function getVisible(di) {
+  if (!evs[di]) return [];
+  return evs[di].map((ev, i) => ({ ev, oi: i })).filter(({ ev }) => {
+    if (PAGE_FILTER) {
+      const w = ev.w || ['all'];
+      if (!w.includes('all') && !w.includes(PAGE_FILTER)) return false;
+    }
     if (activeMembers.size < ALL_MEMBERS.length) {
-      if (!activeMembers.has("all")) {
-        if (!w.includes("all") && !w.some((member) => activeMembers.has(member))) {
-          return false;
-        }
+      if (!activeMembers.has('all')) {
+        const w = ev.w || ['all'];
+        if (!w.includes('all') && !w.some((member) => activeMembers.has(member))) return false;
       }
     }
-    if (activeFloors.size < ALL_FLOORS.length && !activeFloors.has(ev.p || "atelier")) {
-      return false;
+    if (activeFloors.size < ALL_FLOORS.length) {
+      if (!activeFloors.has(ev.p || 'atelier')) return false;
     }
-    if (activeTasks.size < ALL_TASKS.length && !activeTasks.has(ev.c || "pry")) {
-      return false;
+    if (activeTasks.size < ALL_TASKS.length) {
+      if (!activeTasks.has(ev.c || 'pry')) return false;
     }
     return true;
   });
 }
 
+function _toggle(el, attr, activeSet, allArr, selector) {
+  const value = el.dataset[attr];
+  const tags = document.querySelectorAll(selector);
+  if (activeSet.size === allArr.length) {
+    activeSet.clear();
+    activeSet.add(value);
+    tags.forEach((tag) => tag.classList.toggle('active', tag.dataset[attr] === value));
+  } else if (activeSet.has(value) && activeSet.size === 1) {
+    allArr.forEach((item) => activeSet.add(item));
+    tags.forEach((tag) => tag.classList.add('active'));
+  } else if (activeSet.has(value)) {
+    activeSet.delete(value);
+    el.classList.remove('active');
+  } else {
+    activeSet.add(value);
+    el.classList.add('active');
+  }
+  render();
+}
+
+function toggleMember(el) { _toggle(el, 'member', activeMembers, ALL_MEMBERS, '.ftag[data-member]'); }
+function toggleFloor(el) { _toggle(el, 'floor', activeFloors, ALL_FLOORS, '.ftag[data-floor]'); }
+function toggleTask(el) { _toggle(el, 'task', activeTasks, ALL_TASKS, '.ftag[data-task]'); }
+
+function snap(value) { return Math.round(value / SNAP) * SNAP; }
+function fmt(hour) {
+  const hh = Math.floor(hour);
+  const mm = Math.round((hour % 1) * 60);
+  return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+}
+function timeToH(str) {
+  const [h, m] = str.split(':').map(Number);
+  return h + m / 60;
+}
+function hToTime(hour) { return fmt(hour); }
+function toast(msg) {
+  const toastEl = document.getElementById('toast');
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  setTimeout(() => toastEl.classList.remove('show'), 1800);
+}
+
 function layoutDay(dayEvs) {
-  if (!dayEvs.length) return;
+  if (!dayEvs || !dayEvs.length) return;
   dayEvs.forEach((ev) => { ev._col = 0; ev._tc = 1; });
-  const order = dayEvs.map((_, index) => index).sort((a, b) => {
-    if (dayEvs[a].s !== dayEvs[b].s) return dayEvs[a].s - dayEvs[b].s;
+  const idx = dayEvs.map((_, i) => i).sort((a, b) => {
+    const sa = dayEvs[a].s, sb = dayEvs[b].s;
+    if (sa !== sb) return sa - sb;
+    const oa = (dayEvs[a].ord || 0), ob = (dayEvs[b].ord || 0);
+    if (oa !== ob) return oa - ob;
     return (dayEvs[b].e - dayEvs[b].s) - (dayEvs[a].e - dayEvs[a].s);
   });
   const ends = [];
-  order.forEach((index) => {
-    const ev = dayEvs[index];
+  idx.forEach((i) => {
+    const ev = dayEvs[i];
     let placed = false;
-    for (let col = 0; col < ends.length; col += 1) {
-      if (ends[col] <= ev.s) {
-        ends[col] = ev.e;
-        ev._col = col;
+    for (let c = 0; c < ends.length; c += 1) {
+      if (ends[c] <= ev.s) {
+        ends[c] = ev.e;
+        ev._col = c;
         placed = true;
         break;
       }
@@ -511,117 +937,426 @@ function layoutDay(dayEvs) {
       ends.push(ev.e);
     }
   });
-  order.forEach((index) => {
-    const ev = dayEvs[index];
-    let maxCol = ev._col;
+  idx.forEach((i) => {
+    const ev = dayEvs[i];
+    let max = ev._col;
     dayEvs.forEach((other) => {
-      if (other.s < ev.e && other.e > ev.s) {
-        maxCol = Math.max(maxCol, other._col);
-      }
+      if (other.s < ev.e && other.e > ev.s) max = Math.max(max, other._col);
     });
-    ev._tc = maxCol + 1;
+    ev._tc = max + 1;
   });
 }
 
 function render() {
-  const table = document.getElementById("timetable");
-  table.innerHTML = "";
+  const table = document.getElementById('timetable');
+  table.innerHTML = '';
+  dayBodies = [];
   const totalH = EH - SH;
 
-  const timeCol = document.createElement("div");
-  timeCol.className = "time-col";
+  const timeCol = document.createElement('div');
+  timeCol.className = 'time-col';
   timeCol.style.height = `${totalH * PX + 40}px`;
-  timeCol.style.marginTop = "40px";
+  timeCol.style.marginTop = '40px';
   for (let h = SH; h <= EH; h += 1) {
-    const label = document.createElement("div");
-    label.className = "time-label";
+    const label = document.createElement('div');
+    label.className = 'time-label';
     label.style.top = `${(h - SH) * PX}px`;
-    label.textContent = `${String(h === 24 ? 0 : h).padStart(2, "0")}:00`;
+    label.textContent = `${(h === 24 ? '00' : String(h).padStart(2, '0'))}:00`;
     timeCol.appendChild(label);
   }
   table.appendChild(timeCol);
 
-  dayMeta.forEach((meta, dayIndex) => {
-    const col = document.createElement("div");
-    col.className = "day-col";
+  dayMeta.forEach((meta, di) => {
+    const col = document.createElement('div');
+    col.className = 'day-col';
+    col.dataset.day = di;
 
-    const hdr = document.createElement("div");
-    hdr.className = "day-hdr";
-    hdr.innerHTML = `<div class="day-name" style="color:${meta.c}">${DAY_NAMES[dayIndex]}</div><div class="day-theme">${meta.th}</div>`;
+    const hdr = document.createElement('div');
+    hdr.className = 'day-hdr';
+    hdr.innerHTML = `<div class="day-name" style="color:${meta.c}">${DAY_NAMES[di]}</div><div class="day-theme">${meta.th}</div>`;
     col.appendChild(hdr);
 
-    const body = document.createElement("div");
-    body.className = "day-body";
+    const body = document.createElement('div');
+    body.className = 'day-body';
     body.style.height = `${totalH * PX}px`;
+    body.dataset.day = di;
 
     for (let h = 0; h <= totalH; h += 1) {
-      const line = document.createElement("div");
-      line.className = "hline";
+      const line = document.createElement('div');
+      line.className = 'hline';
       line.style.top = `${h * PX}px`;
       body.appendChild(line);
     }
 
-    const visible = getVisible(dayIndex).map((ev) => ({ ...ev }));
-    layoutDay(visible);
-    visible.forEach((ev) => {
-      const el = document.createElement("div");
-      el.className = `ev ev-${ev.c}`;
-      el.style.top = `${(ev.s - SH) * PX}px`;
-      el.style.height = `${Math.max((ev.e - ev.s) * PX - 2, 14)}px`;
-      if (ev._tc > 1) {
-        const width = 100 / ev._tc;
-        el.style.left = `calc(${ev._col * width}% + 1px)`;
-        el.style.width = `calc(${width}% - 2px)`;
-        el.style.right = "auto";
-      }
-      const memberTag = ev.w && !ev.w.includes("all") ? ` [${ev.w.join(",")}]` : "";
-      const placeTag = PLACE_LABELS[ev.p] || "";
-      let html = `<div class="ev-t">${ev.t}${memberTag}</div>`;
-      const height = Math.max((ev.e - ev.s) * PX - 2, 14);
-      if (height > 28) {
-        html += `<div class="ev-s">${ev.u || ""}</div><div class="ev-p">${placeTag}</div>`;
-      } else if (height > 20) {
-        html += `<div class="ev-s">${placeTag}${ev.u ? ` — ${ev.u}` : ""}</div>`;
-      }
-      el.innerHTML = html;
+    const visible = getVisible(di);
+    const visibleEvents = visible.map((v) => v.ev);
+    layoutDay(visibleEvents);
+    visible.forEach(({ ev, oi }) => {
+      const el = mkEvent(ev, di, oi);
       body.appendChild(el);
     });
 
     col.appendChild(body);
     table.appendChild(col);
+    dayBodies.push(body);
+
+    body.addEventListener('mousedown', (evt) => {
+      if (evt.button !== 0 || evt.target.closest('.ev')) return;
+      evt.preventDefault();
+      const rect = body.getBoundingClientRect();
+      const y0 = evt.clientY - rect.top;
+      let s0 = snap(SH + y0 / PX);
+      s0 = Math.max(SH, Math.min(EH - SNAP, s0));
+      let e0 = s0 + SNAP;
+      const preview = document.createElement('div');
+      preview.className = 'ev ev-pry';
+      preview.style.cssText = `top:${(s0 - SH) * PX}px;height:${SNAP * PX}px;opacity:.55;z-index:50;pointer-events:none`;
+      preview.innerHTML = `<div class="ev-t">${fmt(s0)} 〜 ${fmt(e0)}</div>`;
+      body.appendChild(preview);
+
+      function onMove(moveEvt) {
+        const y2 = moveEvt.clientY - rect.top;
+        e0 = snap(SH + y2 / PX);
+        if (e0 < s0 + SNAP) e0 = s0 + SNAP;
+        if (e0 > EH) e0 = EH;
+        preview.style.height = `${Math.max((e0 - s0) * PX - 2, 14)}px`;
+        preview.innerHTML = `<div class="ev-t">${fmt(s0)} 〜 ${fmt(e0)}</div>`;
+      }
+      function onUp() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        if (body.contains(preview)) body.removeChild(preview);
+        editTarget = { di, ei: -1 };
+        document.getElementById('ed-title').value = '';
+        document.getElementById('ed-note').value = '';
+        document.getElementById('ed-start').value = hToTime(s0);
+        document.getElementById('ed-end').value = hToTime(e0);
+        document.getElementById('ed-day').value = di;
+        document.getElementById('ed-cat').value = 'pry';
+        document.getElementById('ed-place').value = 'atelier';
+        document.getElementById('modal-title').textContent = 'イベント追加';
+        document.getElementById('btn-delete').style.display = 'none';
+        document.getElementById('btn-dup').style.display = 'none';
+        setCheckboxes(PAGE_FILTER ? false : true, PAGE_FILTER === 'shuto', PAGE_FILTER === 'zastin', PAGE_FILTER === 'issei');
+        document.getElementById('modal-overlay').classList.add('open');
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
   });
 }
 
-function toggle(set, allValues, selector, attr, element) {
-  const value = element.dataset[attr];
-  const tags = document.querySelectorAll(selector);
-  if (set.size === allValues.length) {
-    set.clear();
-    set.add(value);
-    tags.forEach((tag) => tag.classList.toggle("active", tag.dataset[attr] === value));
-  } else if (set.has(value) && set.size === 1) {
-    allValues.forEach((item) => set.add(item));
-    tags.forEach((tag) => tag.classList.add("active"));
-  } else if (set.has(value)) {
-    set.delete(value);
-    element.classList.remove("active");
+function mkEvent(ev, di, ei) {
+  const el = document.createElement('div');
+  el.className = `ev ev-${ev.c}`;
+  const top = (ev.s - SH) * PX;
+  const height = Math.max((ev.e - ev.s) * PX - 2, 14);
+  el.style.top = `${top}px`;
+  el.style.height = `${height}px`;
+  if (ev._tc > 1) {
+    const width = 100 / ev._tc;
+    el.style.left = `calc(${ev._col * width}% + 1px)`;
+    el.style.width = `calc(${width}% - 2px)`;
+    el.style.right = 'auto';
+  }
+  el.dataset.day = di;
+  el.dataset.idx = ei;
+
+  const memberTag = ev.w && !ev.w.includes('all') ? ` [${ev.w.join(',')}]` : '';
+  const placeTag = PLACE_LABELS[ev.p] || '';
+  let inner = `<div class="ev-t">${ev.t}${memberTag}</div>`;
+  if (height > 28) inner += `<div class="ev-s">${ev.u || ''}</div><div class="ev-p">${placeTag}</div>`;
+  else if (height > 20) inner += `<div class="ev-s">${placeTag}${ev.u ? ` — ${ev.u}` : ''}</div>`;
+  inner += '<div class="resize-handle"></div>';
+  el.innerHTML = inner;
+
+  el.addEventListener('mousedown', (event) => {
+    if (event.target.classList.contains('resize-handle')) startResize(event, di, ei, el);
+    else startDrag(event, di, ei, el);
+  });
+  el.addEventListener('dblclick', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openModal(di, ei);
+  });
+  return el;
+}
+
+function getOverlaps(di, ev) {
+  return evs[di].filter((other) => other !== ev && other.s < ev.e && other.e > ev.s).sort((a, b) => (a.ord || 0) - (b.ord || 0));
+}
+
+function startDrag(event, di, ei, el) {
+  event.preventDefault();
+  const body = el.parentElement;
+  const offsetY = event.clientY - el.getBoundingClientRect().top;
+  const startX = event.clientX;
+  const ev = evs[di][ei];
+  const duration = ev.e - ev.s;
+  const clickTime = Date.now();
+
+  el.classList.add('dragging');
+  dragState = { di, ei, el, body, offsetY, duration, startDi: di, startS: ev.s, moved: false, startX };
+
+  function onMove(moveEvt) {
+    dragState.moved = true;
+    const targetBody = getBodyUnder(moveEvt.clientX);
+    const newDi = targetBody ? Number(targetBody.dataset.day) : dragState.di;
+    const rect = (targetBody || body).getBoundingClientRect();
+    const y = moveEvt.clientY - rect.top - offsetY;
+    let newS = snap(SH + y / PX);
+    newS = Math.max(SH, Math.min(EH - duration, newS));
+    el.style.top = `${(newS - SH) * PX}px`;
+    dragState.newS = newS;
+    dragState.newDi = newDi;
+    dragState.dx = moveEvt.clientX - startX;
+  }
+
+  function onUp() {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    el.classList.remove('dragging');
+
+    if (!dragState.moved && Date.now() - clickTime < 300) {
+      openModal(dragState.startDi, ei);
+      dragState = null;
+      return;
+    }
+
+    const dx = dragState.dx || 0;
+    const movedY = dragState.newS !== undefined && dragState.newS !== dragState.startS;
+    const movedDay = dragState.newDi !== undefined && dragState.newDi !== dragState.startDi;
+
+    if (Math.abs(dx) > 30 && !movedDay && !movedY) {
+      const currentEv = evs[di][ei];
+      const siblings = getOverlaps(di, currentEv);
+      if (siblings.length > 0) {
+        const all = [currentEv, ...siblings].sort((a, b) => (a.ord || 0) - (b.ord || 0));
+        const currentIndex = all.indexOf(currentEv);
+        const swapIndex = dx > 0 ? currentIndex + 1 : currentIndex - 1;
+        if (swapIndex >= 0 && swapIndex < all.length) {
+          const tmp = all[currentIndex].ord || 0;
+          all[currentIndex].ord = all[swapIndex].ord || 0;
+          all[swapIndex].ord = tmp;
+          if (all[currentIndex].ord === all[swapIndex].ord) {
+            all[currentIndex].ord = swapIndex;
+            all[swapIndex].ord = currentIndex;
+          }
+          saveData();
+          render();
+          toast('配置を変更しました');
+          dragState = null;
+          return;
+        }
+      }
+    }
+
+    if (dragState.newS !== undefined) {
+      const target = evs[dragState.startDi][ei];
+      if (movedDay) {
+        evs[dragState.startDi].splice(ei, 1);
+        target.s = dragState.newS;
+        target.e = dragState.newS + duration;
+        evs[dragState.newDi].push(target);
+      } else {
+        target.s = dragState.newS;
+        target.e = dragState.newS + duration;
+      }
+      saveData();
+      render();
+      toast('移動しました');
+    }
+    dragState = null;
+  }
+
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+}
+
+function startResize(event, di, ei, el) {
+  event.preventDefault();
+  event.stopPropagation();
+  const ev = evs[di][ei];
+
+  function onMove(moveEvt) {
+    const rect = el.parentElement.getBoundingClientRect();
+    const y = moveEvt.clientY - rect.top;
+    let newE = snap(SH + y / PX);
+    newE = Math.max(ev.s + SNAP, Math.min(EH, newE));
+    el.style.height = `${Math.max((newE - ev.s) * PX - 2, 14)}px`;
+    ev.e = newE;
+  }
+
+  function onUp() {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    saveData();
+    render();
+    toast('リサイズしました');
+  }
+
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+}
+
+function getBodyUnder(x) {
+  for (const body of dayBodies) {
+    const rect = body.getBoundingClientRect();
+    if (x >= rect.left && x <= rect.right) return body;
+  }
+  return null;
+}
+
+function setCheckboxes(all, sh, za, issei) {
+  document.getElementById('cb-all').checked = all;
+  document.getElementById('cb-shuto').checked = all || sh;
+  document.getElementById('cb-zastin').checked = all || za;
+  document.getElementById('cb-issei').checked = all || issei;
+}
+
+function readW() {
+  if (document.getElementById('cb-all').checked) return ['all'];
+  const w = [];
+  if (document.getElementById('cb-shuto').checked) w.push('shuto');
+  if (document.getElementById('cb-zastin').checked) w.push('zastin');
+  if (document.getElementById('cb-issei').checked) w.push('issei');
+  return w.length ? w : ['all'];
+}
+
+function openModal(di, ei) {
+  editTarget = { di, ei };
+  const ev = evs[di][ei];
+  document.getElementById('ed-title').value = ev.t.replace(/[📢🔴🎬]\s?/g, '');
+  document.getElementById('ed-note').value = ev.u || '';
+  document.getElementById('ed-start').value = hToTime(ev.s);
+  document.getElementById('ed-end').value = hToTime(ev.e);
+  document.getElementById('ed-day').value = di;
+  document.getElementById('ed-cat').value = ev.c;
+  document.getElementById('ed-place').value = ev.p || 'atelier';
+  document.getElementById('modal-title').textContent = 'イベント編集';
+  document.getElementById('btn-delete').style.display = '';
+  document.getElementById('btn-dup').style.display = '';
+  const w = ev.w || ['all'];
+  const isAll = w.includes('all');
+  setCheckboxes(isAll, isAll || w.includes('shuto'), isAll || w.includes('zastin'), isAll || w.includes('issei'));
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editTarget = null;
+}
+
+function saveEvent() {
+  const title = document.getElementById('ed-title').value.trim();
+  if (!title) { toast('タイトルを入力'); return; }
+  const note = document.getElementById('ed-note').value;
+  const s = timeToH(document.getElementById('ed-start').value);
+  const e = timeToH(document.getElementById('ed-end').value);
+  const newDi = Number(document.getElementById('ed-day').value);
+  const cat = document.getElementById('ed-cat').value;
+  const place = document.getElementById('ed-place').value;
+  if (e <= s) { toast('終了は開始より後に'); return; }
+
+  const w = readW();
+  const newEv = { s, e, t: title, u: note, c: cat, w, p: place };
+
+  if (editTarget) {
+    const { di, ei } = editTarget;
+    if (ei !== -1) evs[di].splice(ei, 1);
+    evs[newDi].push(newEv);
+  }
+  saveData();
+  render();
+  closeModal();
+  toast('保存しました');
+}
+
+function deleteEvent() {
+  if (!editTarget || editTarget.ei === -1) return;
+  if (!confirm('このイベントを削除しますか？')) return;
+  const { di, ei } = editTarget;
+  evs[di].splice(ei, 1);
+  saveData();
+  render();
+  closeModal();
+  toast('削除しました');
+}
+
+function dupEvent() {
+  if (!editTarget || editTarget.ei === -1) return;
+  const { di, ei } = editTarget;
+  const copy = JSON.parse(JSON.stringify(evs[di][ei]));
+  evs[di].push(copy);
+  saveData();
+  render();
+  closeModal();
+  toast('複製しました');
+}
+
+function addEvent() {
+  editTarget = { di: 0, ei: -1 };
+  document.getElementById('ed-title').value = '';
+  document.getElementById('ed-note').value = '';
+  document.getElementById('ed-start').value = '09:00';
+  document.getElementById('ed-end').value = '10:00';
+  document.getElementById('ed-day').value = '0';
+  document.getElementById('ed-cat').value = 'pry';
+  document.getElementById('ed-place').value = 'atelier';
+  document.getElementById('modal-title').textContent = 'イベント追加';
+  document.getElementById('btn-delete').style.display = 'none';
+  document.getElementById('btn-dup').style.display = 'none';
+  setCheckboxes(PAGE_FILTER ? false : true, PAGE_FILTER === 'shuto', PAGE_FILTER === 'zastin', PAGE_FILTER === 'issei');
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function overwriteDefault() {
+  if (!confirm('現在のスケジュールを保存しますか？（リセット時にこの状態に戻ります）')) return;
+  localStorage.setItem(`${LS_KEY}-saved`, JSON.stringify(evs));
+  toast('保存しました');
+}
+
+function resetData() {
+  if (!confirm('全ての変更をリセットして保存状態に戻しますか？')) return;
+  const saved = localStorage.getItem(`${LS_KEY}-saved`);
+  if (saved) {
+    localStorage.setItem(LS_KEY, saved);
+    evs = JSON.parse(saved);
   } else {
-    set.add(value);
-    element.classList.add("active");
+    localStorage.removeItem(LS_KEY);
+    evs = deepClone(DEFAULT_EVS);
+    saveData();
   }
   render();
+  toast('リセットしました');
 }
 
-function toggleMember(element) {
-  toggle(activeMembers, ALL_MEMBERS, ".ftag[data-member]", "member", element);
-}
-function toggleFloor(element) {
-  toggle(activeFloors, ALL_FLOORS, ".ftag[data-floor]", "floor", element);
-}
-function toggleTask(element) {
-  toggle(activeTasks, ALL_TASKS, ".ftag[data-task]", "task", element);
-}
+document.getElementById('modal-overlay').addEventListener('click', (event) => {
+  if (event.target === event.currentTarget) closeModal();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeModal();
+});
+document.getElementById('cb-all').addEventListener('change', function () {
+  const checked = this.checked;
+  document.getElementById('cb-shuto').checked = checked;
+  document.getElementById('cb-zastin').checked = checked;
+  document.getElementById('cb-issei').checked = checked;
+});
+['cb-shuto', 'cb-zastin', 'cb-issei'].forEach((id) => {
+  document.getElementById(id).addEventListener('change', function () {
+    if (!this.checked) document.getElementById('cb-all').checked = false;
+    else if (
+      document.getElementById('cb-shuto').checked &&
+      document.getElementById('cb-zastin').checked &&
+      document.getElementById('cb-issei').checked
+    ) {
+      document.getElementById('cb-all').checked = true;
+    }
+  });
+});
 
+loadData();
 render();
 </script>
 </body>
